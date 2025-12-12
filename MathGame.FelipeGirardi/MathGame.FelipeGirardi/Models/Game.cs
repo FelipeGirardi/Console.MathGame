@@ -1,7 +1,13 @@
 ﻿namespace MathGame.FelipeGirardi.Models;
 internal class Game
 {
-    internal required List<Question> Questions { get; set; }
-    internal int totalPoints { get; set; }
+    internal List<Question> Questions { get; set; }
+    internal int TotalPoints { get; set; }
+
+    internal Game()
+    {
+        Questions = new List<Question>();
+        TotalPoints = 0;
+    }
 }
 

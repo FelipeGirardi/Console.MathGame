@@ -6,6 +6,7 @@ namespace MathGame.FelipeGirardi;
 internal class UserInterface
 {
     private readonly GameController _gameController = new();
+    private readonly GameHistoryController _gameHistoryController = new();
 
     internal void MainMenu()
     {
@@ -24,7 +25,7 @@ internal class UserInterface
                     ChooseGame();
                     break;
                 case Options.ViewHistory:
-                    //_gameHistoryController.ViewHistory();
+                    _gameHistoryController.ShowGameHistory();
                     break;
                 case Options.Quit:
                     return;
@@ -41,7 +42,7 @@ internal class UserInterface
                 .Title("Choose a type of game:")
                 .AddChoices(Enum.GetValues<Operations>()));
 
-        _gameController.startGame(gameChoice);
+        _gameController.StartGame(gameChoice);
     }
 }
 

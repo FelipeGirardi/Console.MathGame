@@ -1,14 +1,15 @@
-﻿using Spectre.Console;
-using System;
-using System.Drawing;
+﻿using MathGame.FelipeGirardi.Models;
+using Spectre.Console;
 using static MathGame.FelipeGirardi.Enums;
 
 namespace MathGame.FelipeGirardi.Controllers;
 internal class GameController
 {
-    public void startGame(Operations operation)
+    public void StartGame(Operations operation)
     {
         Console.Clear();
+        Game game = new Game();
+        int totalPoints = 0;
 
         for (int i = 0; i < 5; i++)
         {
@@ -16,6 +17,7 @@ internal class GameController
             int operand2;
             int result;
             char operationChar;
+            bool isAnswerCorrect;
 
             (operand1, operand2) = GenerateOperands(operation);
             result = GenerateResult(operand1, operand2, operation);
@@ -25,14 +27,26 @@ internal class GameController
 
             if(answer == result)
             {
-                AnsiConsole.MarkupLine($"[green]Correct answer![/] +1 point");
+                AnsiConsole.MarkupLine($"[green]Correct answer![/] +1 point\n");
+                isAnswerCorrect = true;
+                totalPoints++;
             } else
             {
-                AnsiConsole.MarkupLine($"[red]Wrong answer![/]");
+                AnsiConsole.MarkupLine($"[red]Wrong answer![/] The correct answer was {result}.\n");
+                isAnswerCorrect = false;
             }
+
+            // create Question object and add to Game object
+            Question question = new Question(operand1, operationChar, operand2, answer, isAnswerCorrect);
+            game.Questions.Add(question);
         }
 
-        AnsiConsole.MarkupLine("Press Any Key to Continue.");
+        // get total points and store Game in mock database
+        game.TotalPoints = totalPoints;
+        GameDatabase.Games.Add(game);
+
+        AnsiConsole.MarkupLine($"Game over! You scored [blue] {totalPoints} points.[/]");
+        AnsiConsole.MarkupLine("Press any key to return to the menu.");
         Console.ReadKey();
     }
 
