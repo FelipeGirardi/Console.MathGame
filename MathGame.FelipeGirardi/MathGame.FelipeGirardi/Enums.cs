@@ -16,5 +16,12 @@ internal class Enums
         Multiplication,
         Division,
     }
+
+    internal enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
 }
 

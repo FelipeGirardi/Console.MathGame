@@ -29,7 +29,7 @@ internal class UserInterface
                     SetupRandomGame(nQuestions);
                     break;
                 case Options.ViewHistory:
-                    _gameHistoryController.ShowGameHistory();
+                    ShowGameHistory();
                     break;
                 case Options.Quit:
                     return;
@@ -39,9 +39,7 @@ internal class UserInterface
 
     internal void ChooseGame(int nQuestions)
     {
-
         Operations[] operations = new Operations[5];
-
         Console.Clear();
 
         var gameChoice = AnsiConsole.Prompt(
@@ -70,6 +68,11 @@ internal class UserInterface
         }
 
         _gameController.StartGame(operations);
+    }
+
+    internal void ShowGameHistory()
+    {
+        _gameHistoryController.ShowGameHistory();
     }
 }
 

@@ -12,6 +12,7 @@ internal class GameController
 
         Game game = new Game();
         int totalPoints = 0;
+        int questionNumber = 1;
 
         // set timer to track game time
         Stopwatch clock = Stopwatch.StartNew();
@@ -19,15 +20,16 @@ internal class GameController
         foreach (Operations operation in operations)
         {
             int operand1, operand2, result;
-            int questionNumber = 1;
             char operationChar;
             bool isAnswerCorrect;
+            Difficulty difficulty = GetDifficulty(questionNumber);
 
-            (operand1, operand2) = GenerateOperands(operation);
+            (operand1, operand2) = GenerateOperands(operation, difficulty);
             result = GenerateResult(operand1, operand2, operation);
             operationChar = GetOperationChar(operation);
 
-            var answer = AnsiConsole.Ask<int>($"[blue]Question {questionNumber}:[/] {operand1} {operationChar} {operand2} = ");
+            string difficultyString = GetDifficultyString(difficulty);
+            var answer = AnsiConsole.Ask<int>($"{difficultyString} Question {questionNumber}:[/] {operand1} {operationChar} {operand2} = ");
 
             if(answer == result)
             {
@@ -60,24 +62,29 @@ internal class GameController
         Console.ReadKey();
     }
 
-    public (int operand1, int operand2) GenerateOperands(Operations operation)
+    public (int operand1, int operand2) GenerateOperands(Operations operation, Difficulty difficulty)
     {
         Random random = new Random();
         int operand1 = 0;
         int operand2 = 0;
+        int minValue, maxValue;
 
         switch (operation)
         {
             // addition: operands between 0 and 100
             case Operations.Addition:
-                operand1 = random.Next(0, 101);
-                operand2 = random.Next(0, 101);
+                minValue = difficulty == Difficulty.Easy ? 0 : difficulty == Difficulty.Medium ? 100 : 500;
+                maxValue = difficulty == Difficulty.Easy ? 101 : difficulty == Difficulty.Medium ? 501 : 1001;
+                operand1 = random.Next(minValue, maxValue);
+                operand2 = random.Next(minValue, maxValue);
                 break;
 
             // subtraction: operands between 0 and 100, operand1 must be bigger than operand2
             case Operations.Subtraction:
-                operand1 = random.Next(0, 101);
-                operand2 = random.Next(0, 101);
+                minValue = difficulty == Difficulty.Easy ? 0 : difficulty == Difficulty.Medium ? 100 : 500;
+                maxValue = difficulty == Difficulty.Easy ? 101 : difficulty == Difficulty.Medium ? 501 : 1001;
+                operand1 = random.Next(minValue, maxValue);
+                operand2 = random.Next(minValue, maxValue);
 
                 if (operand2 > operand1)
                 {
@@ -90,20 +97,24 @@ internal class GameController
 
             // multiplication: operands between 0 and 10
             case Operations.Multiplication:
-                operand1 = random.Next(0, 11);
-                operand2 = random.Next(0, 11);
+                minValue = difficulty == Difficulty.Easy ? 0 : difficulty == Difficulty.Medium ? 10 : 25;
+                maxValue = difficulty == Difficulty.Easy ? 11 : difficulty == Difficulty.Medium ? 25 : 50;
+                operand1 = random.Next(minValue, maxValue);
+                operand2 = random.Next(minValue, maxValue);
                 break;
 
             // division: operands between 0 and 100, operand1 must be divisible by operand2
             case Operations.Division:
                 bool isDivisionValid = false;
+                minValue = difficulty == Difficulty.Easy ? 1 : difficulty == Difficulty.Medium ? 4 : 8;
+                maxValue = difficulty == Difficulty.Easy ? 101 : difficulty == Difficulty.Medium ? 501 : 1001;
 
                 while(!isDivisionValid) {
-                    operand1 = random.Next(0, 101);
+                    operand1 = random.Next(minValue, maxValue);
 
                     for (int i = 0; i < 10; i++)
                     {
-                        operand2 = random.Next(1, 101);
+                        operand2 = random.Next(minValue, maxValue);
                         if (operand1 % operand2 == 0)
                         {
                             isDivisionValid = true;
@@ -151,5 +162,17 @@ internal class GameController
             default:
                 return '+';
         }
+    }
+
+    public string GetDifficultyString(Difficulty difficulty)
+    {
+        return difficulty == Difficulty.Easy ? "[blue](Easy)" :
+               difficulty == Difficulty.Medium ? "[olive](Medium)" : "[maroon](Hard)";
+    }
+
+    public Difficulty GetDifficulty(int questionNumber)
+    {
+        return (questionNumber == 1 || questionNumber == 2) ? Difficulty.Easy :
+               (questionNumber == 3 || questionNumber == 4) ? Difficulty.Medium : Difficulty.Hard;
     }
 }
