@@ -7,6 +7,7 @@ internal class UserInterface
 {
     private readonly GameController _gameController = new();
     private readonly GameHistoryController _gameHistoryController = new();
+    int nQuestions = 5;
 
     internal void MainMenu()
     {
@@ -22,7 +23,10 @@ internal class UserInterface
             switch (menuChoice)
             {
                 case Options.StartGame:
-                    ChooseGame();
+                    ChooseGame(nQuestions);
+                    break;
+                case Options.RandomGame:
+                    SetupRandomGame(nQuestions);
                     break;
                 case Options.ViewHistory:
                     _gameHistoryController.ShowGameHistory();
@@ -33,8 +37,11 @@ internal class UserInterface
         }
     }
 
-    internal void ChooseGame()
+    internal void ChooseGame(int nQuestions)
     {
+
+        Operations[] operations = new Operations[5];
+
         Console.Clear();
 
         var gameChoice = AnsiConsole.Prompt(
@@ -42,7 +49,27 @@ internal class UserInterface
                 .Title("Choose a type of game:")
                 .AddChoices(Enum.GetValues<Operations>()));
 
-        _gameController.StartGame(gameChoice);
+        for (int i = 0; i < nQuestions; i++)
+        {
+            operations[i] = gameChoice;
+        }
+
+        _gameController.StartGame(operations);
+    }
+
+    internal void SetupRandomGame(int nQuestions)
+    {
+        Operations[] operations = new Operations[5];
+        Random random = new Random();
+        Array opValues = Enum.GetValues(typeof(Operations));
+
+        for (int i = 0; i < nQuestions; i++)
+        {
+            int randomOpNumber = random.Next(opValues.Length);
+            operations[i] = (Operations)opValues.GetValue(randomOpNumber)!;
+        }
+
+        _gameController.StartGame(operations);
     }
 }
 

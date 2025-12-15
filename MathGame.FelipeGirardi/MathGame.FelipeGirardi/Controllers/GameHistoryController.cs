@@ -26,6 +26,7 @@ internal class GameHistoryController
                     AnsiConsole.MarkupLine($"[{(question.IsCorrect ? "blue" : "red")}] {question.Operand1} {question.Operation} {question.Operand2} = {question.Result} [/]");
                 }
                 AnsiConsole.MarkupLine($"Points = {game.TotalPoints}\n");
+                AnsiConsole.MarkupLine($"Time taken = {game.TotalTime} seconds\n");
                 nGames++;
             }
 

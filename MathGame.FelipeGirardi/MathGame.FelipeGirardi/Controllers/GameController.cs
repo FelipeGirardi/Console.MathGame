@@ -1,21 +1,25 @@
 ﻿using MathGame.FelipeGirardi.Models;
 using Spectre.Console;
+using System.Diagnostics;
 using static MathGame.FelipeGirardi.Enums;
 
 namespace MathGame.FelipeGirardi.Controllers;
 internal class GameController
 {
-    public void StartGame(Operations operation)
+    public void StartGame(Operations[] operations)
     {
         Console.Clear();
+
         Game game = new Game();
         int totalPoints = 0;
 
-        for (int i = 0; i < 5; i++)
+        // set timer to track game time
+        Stopwatch clock = Stopwatch.StartNew();
+
+        foreach (Operations operation in operations)
         {
-            int operand1;
-            int operand2;
-            int result;
+            int operand1, operand2, result;
+            int questionNumber = 1;
             char operationChar;
             bool isAnswerCorrect;
 
@@ -23,7 +27,7 @@ internal class GameController
             result = GenerateResult(operand1, operand2, operation);
             operationChar = GetOperationChar(operation);
 
-            var answer = AnsiConsole.Ask<int>($"[blue]Question {i+1}:[/] {operand1} {operationChar} {operand2} = ");
+            var answer = AnsiConsole.Ask<int>($"[blue]Question {questionNumber}:[/] {operand1} {operationChar} {operand2} = ");
 
             if(answer == result)
             {
@@ -39,7 +43,13 @@ internal class GameController
             // create Question object and add to Game object
             Question question = new Question(operand1, operationChar, operand2, answer, isAnswerCorrect);
             game.Questions.Add(question);
+
+            questionNumber++;
         }
+
+        // end timer and get game seconds
+        clock.Stop();
+        game.TotalTime = clock.Elapsed.Seconds;
 
         // get total points and store Game in mock database
         game.TotalPoints = totalPoints;

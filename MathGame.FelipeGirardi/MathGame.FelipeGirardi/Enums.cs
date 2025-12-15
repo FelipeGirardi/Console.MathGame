@@ -4,6 +4,7 @@ internal class Enums
     internal enum Options
     {
         StartGame,
+        RandomGame,
         ViewHistory,
         Quit
     }
